@@ -1,0 +1,42 @@
+#include <Servo.h>
+    Servo myservo;
+    int pos = 0;  
+    int fsrPin = 1;     // the FSR and 10K pulldown are connected to a0
+    int fsrReading;     // the analog reading from the FSR resistor divider
+     
+    void setup(void) {
+      // We'll send debugging information via the Serial monitor
+      Serial.begin(9600);
+      myservo.attach(9);   
+    }
+     
+    void loop(void) {
+      fsrReading = analogRead(fsrPin);  
+     
+      Serial.print("Analog reading = ");
+      Serial.print(fsrReading);     // the raw analog reading
+     
+      // We'll have a few threshholds, qualitatively determined
+      if (fsrReading < 10) {
+        Serial.println(" - No pressure");
+      } else if (fsrReading < 200) {
+        Serial.println(" - Light touch");
+      } else if (fsrReading < 500) {
+        Serial.println(" - Light squeeze");
+      } else if (fsrReading < 800) {
+        Serial.println(" - Medium squeeze"); //TURN SERVO ON AT MEDIUM SQUEEZE!
+        for(pos = 0; pos <= 180; pos += 1) // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    myservo.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(2);                       // waits 15ms for the servo to reach the position 
+  } 
+  for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    myservo.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(2);
+  }
+      } else {
+        Serial.println(" - Big squeeze");
+      }
+      delay(1000);
+    } 
